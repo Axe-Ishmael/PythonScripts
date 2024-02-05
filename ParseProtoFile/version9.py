@@ -5,9 +5,10 @@ from pathlib import Path
 
 # 指定源目录和目标目录
 source_dir = "/Users/kyrieliao/AndroidStudioProjects/api_proto/src/mobile_framework"
-target_dir = "/Users/kyrieliao/python_script/protogeneratedproduclog11"
+target_dir = "/Users/kyrieliao/python_script/protogeneratedproduclog_V9"
+mobile_framework_dir = "/Users/kyrieliao/AndroidStudioProjects/api_proto/src/mobile_framework"
 
-error_log_file = "/Users/kyrieliao/python_script/error_log11.txt"  # 指定错误日志文件的路径
+error_log_file = "/Users/kyrieliao/python_script/error_log_V9.txt"  # 指定错误日志文件的路径
 
 error_count = 0
 proto_file_count = 0
@@ -24,14 +25,23 @@ def getImportProtoAbsPath(currentAbsPath,import_file):
     target_path = base_path_string_list[:len(base_path_string_list) - len(import_file_string_list)+1] + import_file_string_list
     # 拼接 target_path 的元素，并返回绝对路径字符串
     absolute_path = "/".join(target_path)
-    
+
+
+    return absolute_path
+
+
+def getImportProtoAbsPathV2(mobile_framework_dir,import_file):
+
+
+    # 拼接 target_path 的元素，并返回绝对路径字符串
+    absolute_path = os.path.join(mobile_framework_dir, import_file)
+
 
     return absolute_path
 
 
 
-
-def get_proto_files_recursively(proto_file_path, base_dir):
+def get_proto_files_recursively(proto_file_path, mobile_framework_dir):
     visited_files = []
 
     def visit_proto_file(file_path):
@@ -46,10 +56,10 @@ def get_proto_files_recursively(proto_file_path, base_dir):
             # 查找并记录所有 import 文件
             for match in import_pattern.finditer(content):
                 imported_file = match.group(1)
-                imported_file_path = getImportProtoAbsPath(os.path.dirname(file_path),imported_file)
+                imported_file_path = getImportProtoAbsPathV2(mobile_framework_dir,imported_file)
 
                 if not os.path.isfile(imported_file_path):
-                    imported_file_path = os.path.join(base_dir, imported_file)
+                    imported_file_path = os.path.join(mobile_framework_dir, imported_file)
                     if not os.path.isfile(imported_file_path):
                         raise FileNotFoundError(f"Imported file '{imported_file}' not found at '{imported_file_path}' current file path is '{file_path}'")
 
@@ -69,7 +79,7 @@ for root, _, files in os.walk(source_dir):
             proto_file_abs_path = os.path.join(root, file)
 
             # 获取所有相关的 .proto 文件（包括当前文件和所有导入的文件）
-            related_proto_files = get_proto_files_recursively(proto_file_abs_path, source_dir)
+            related_proto_files = get_proto_files_recursively(proto_file_abs_path, mobile_framework_dir)
             print("\n\n")
             print(related_proto_files)
             print("///////////////////////////////")
@@ -93,7 +103,7 @@ for root, _, files in os.walk(source_dir):
                 print(e.stderr)
                 print("***********************")
                 with open(error_log_file, 'a') as f:
-                    f.write(f"Stderr: {proto_file_abs_path}\n related_files:{related_proto_files}\n{e.stderr}\n\n") 
+                    f.write(f"Stderr: {proto_file_abs_path}\n related_files:{related_proto_files}\n{e.stderr}\n\n")
                 error_count += 1  # 增加错误计数器
                 continue
 
@@ -108,7 +118,7 @@ for root, _, files in os.walk(source_dir):
                 print(e.stderr)
                 print("***********************")
                 with open(error_log_file, 'a') as f:
-                    f.write(f"Stderr: {proto_file_abs_path}\n related_files:{related_proto_files}\n{e.stderr}\n\n") 
+                    f.write(f"Stderr: {proto_file_abs_path}\n related_files:{related_proto_files}\n{e.stderr}\n\n")
                 error_count += 1  # 增加错误计数器
 
 # 在文件末尾写入最终的错误数量
