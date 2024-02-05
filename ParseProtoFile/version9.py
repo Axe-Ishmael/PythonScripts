@@ -94,7 +94,7 @@ for root, _, files in os.walk(source_dir):
 
             # 执行 pbjs 命令
             js_output_file = target_proto_file_abs_path.replace(".proto", ".js")
-            pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited -o {js_output_file} {" ".join(related_proto_files)}'
+            pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -o {js_output_file} {" ".join(related_proto_files)}'
             # subprocess.run(pbjs_cmd, shell=True, check=True)
             try:
                 result = subprocess.run(pbjs_cmd, shell=True, check=True, capture_output=True, text=True)
