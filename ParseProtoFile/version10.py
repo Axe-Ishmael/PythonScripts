@@ -4,11 +4,11 @@ import subprocess
 from pathlib import Path
 
 # 指定源目录和目标目录
-source_dir = "/Users/kyrieliao/AndroidStudioProjects/api_proto/src/mobile_framework/setting/proto"
-target_dir = "/Users/kyrieliao/python_script/protogeneratedproduclog_V77"
-mobile_framework_dir = "/Users/kyrieliao/AndroidStudioProjects/api_proto/src/mobile_framework"
+source_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework/setting/proto"
+target_dir = "/Users/axeishmael/PythonScripts/protogeneratedproduclog_D1"
+mobile_framework_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework"
 
-error_log_file = "/Users/kyrieliao/python_script/error_log_V77.txt"  # 指定错误日志文件的路径
+error_log_file = "/Users/axeishmael/PythonScripts/error_log_D1.txt"  # 指定错误日志文件的路径
 
 error_count = 0
 proto_file_count = 0
