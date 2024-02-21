@@ -4,10 +4,10 @@ import subprocess
 from pathlib import Path
 
 # 指定源目录和目标目录
-source_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework/setting/proto"
-target_dir = "output/protogeneratedproduclog_D3"
-mobile_framework_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework"
+source_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework/setting/proto" #目标文件夹路径
+mobile_framework_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" #api_proto工程中mobile_framework文件夹所在路径
 
+target_dir = "output/protogeneratedproduclog_D3"  # 指定产物输出位置
 error_log_file = "output/error_log_D3.txt"  # 指定错误日志文件的路径
 
 error_count = 0
