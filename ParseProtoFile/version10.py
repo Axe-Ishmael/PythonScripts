@@ -5,10 +5,10 @@ from pathlib import Path
 
 # 指定源目录和目标目录
 source_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework/setting/proto"
-target_dir = "output/protogeneratedproduclog_D1"
+target_dir = "output/protogeneratedproduclog_D3"
 mobile_framework_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework"
 
-error_log_file = "output/error_log_D1.txt"  # 指定错误日志文件的路径
+error_log_file = "output/error_log_D3.txt"  # 指定错误日志文件的路径
 
 error_count = 0
 proto_file_count = 0
