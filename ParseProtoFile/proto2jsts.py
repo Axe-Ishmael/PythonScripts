@@ -4,10 +4,10 @@ import subprocess
 from pathlib import Path
 
 # 指定源目录和目标目录
-source_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework/setting/proto/setting_service_api.proto" #目标文件夹路径/目标.proto文件路径
+target_path = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework/setting/proto/setting_service_api.proto" #目标文件夹路径/目标.proto文件路径
 mobile_framework_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" #api_proto工程中mobile_framework文件夹所在路径
 
-target_dir = "output/protogeneratedproduclog_D5"  # 指定产物输出位置
+output_dir = "output/protogeneratedproduclog_D5"  # 指定产物输出位置
 error_log_file = "output/error_log_D5.txt"  # 指定错误日志文件的路径
 
 error_count = 0
@@ -96,11 +96,11 @@ def get_proto_files_recursively(proto_file_path, mobile_framework_dir):
     return visited_files
 
 # 创建目标目录
-Path(target_dir).mkdir(parents=True, exist_ok=True)
+Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 # 如果source_dir是一个文件夹路径，遍历源目录中的所有 .proto 文件
-if os.path.isdir(source_dir):
-    for root, _, files in os.walk(source_dir):
+if os.path.isdir(target_path):
+    for root, _, files in os.walk(target_path):
         for file in files:
             if file.endswith(".proto"):
                 # 获取 .proto 文件的绝对路径
@@ -115,8 +115,8 @@ if os.path.isdir(source_dir):
                 proto_file_count += 1  # 增加文件计数器
 
                 # 创建目标目录结构
-                proto_file_rel_path = os.path.relpath(proto_file_abs_path, source_dir)
-                target_proto_file_abs_path = os.path.join(target_dir, proto_file_rel_path)
+                proto_file_rel_path = os.path.relpath(proto_file_abs_path, target_path)
+                target_proto_file_abs_path = os.path.join(output_dir, proto_file_rel_path)
                 target_proto_file_abs_dir = os.path.dirname(target_proto_file_abs_path)
                 Path(target_proto_file_abs_dir).mkdir(parents=True, exist_ok=True)
 
@@ -156,8 +156,8 @@ if os.path.isdir(source_dir):
                 replace_text_in_file(ts_output_file, "protobufjs", "@ohos/protobufjs")
 
 # 如果source_dir指向的是某个具体proto文件
-elif os.path.isfile(source_dir) and source_dir.endswith(".proto"):
-    proto_file_abs_path = source_dir
+elif os.path.isfile(target_path) and target_path.endswith(".proto"):
+    proto_file_abs_path = target_path
 
     # 获取所有相关的 .proto 文件（包括当前文件和所有导入的文件）
     related_proto_files = get_proto_files_recursively(proto_file_abs_path, mobile_framework_dir)
@@ -168,8 +168,8 @@ elif os.path.isfile(source_dir) and source_dir.endswith(".proto"):
     proto_file_count += 1  # 增加文件计数器
 
     # 创建目标目录结构
-    proto_file_rel_path = os.path.basename(source_dir)
-    target_proto_file_abs_path = os.path.join(target_dir, proto_file_rel_path)
+    proto_file_rel_path = os.path.basename(target_path)
+    target_proto_file_abs_path = os.path.join(output_dir, proto_file_rel_path)
     target_proto_file_abs_dir = os.path.dirname(target_proto_file_abs_path)
     Path(target_proto_file_abs_dir).mkdir(parents=True, exist_ok=True)
 
