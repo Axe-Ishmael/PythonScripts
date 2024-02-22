@@ -4,11 +4,11 @@ import subprocess
 from pathlib import Path
 
 # 指定源目录和目标目录
-target_path = "/Users/axeishmael/IdeaProjects/Jni2Proto/src/main/java/Output/hm_service.proto" #目标文件夹路径/目标.proto文件路径
+target_path = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" #目标文件夹路径/目标.proto文件路径
 mobile_framework_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" #api_proto工程中mobile_framework文件夹所在路径
 
-output_dir = "output/protogeneratedproduclog_D8"  # 指定产物输出位置
-error_log_file = "output/error_log_D8.txt"  # 指定错误日志文件的路径
+output_dir = "output/protogeneratedproduclog_D11"  # 指定产物输出位置
+error_log_file = "output/error_log_D11.txt"  # 指定错误日志文件的路径
 
 error_count = 0
 proto_file_count = 0
@@ -28,6 +28,16 @@ def remove_comments_from_file(file_path):
         content = file.read()
         # 正则表达式匹配单行和多行注释
         content_no_comments = re.sub(r'//.*?$|/\*.*?\*/', '', content, flags=re.MULTILINE | re.DOTALL)
+    with open(file_path, 'w') as file:
+        file.write(content_no_comments)
+
+def remove_comments_from_file_new(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+        # 正则表达式匹配单行注释和多行注释，包括仅包含注释的行
+        content_no_comments = re.sub(r'(?m)^\s*//.*?$|/\*.*?\*/', '', content, flags=re.DOTALL)
+        # 移除因为注释导致的空行
+        content_no_comments = re.sub(r'\n\s*\n', '\n', content_no_comments, flags=re.MULTILINE)
     with open(file_path, 'w') as file:
         file.write(content_no_comments)
 
@@ -106,12 +116,6 @@ if os.path.isdir(target_path):
                 # 获取 .proto 文件的绝对路径
                 proto_file_abs_path = os.path.join(root, file)
 
-                # 获取所有相关的 .proto 文件（包括当前文件和所有导入的文件）
-                related_proto_files = get_proto_files_recursively(proto_file_abs_path, mobile_framework_dir)
-                print("\n\n")
-                print(related_proto_files)
-                print("///////////////////////////////")
-
                 proto_file_count += 1  # 增加文件计数器
 
                 # 创建目标目录结构
@@ -122,7 +126,7 @@ if os.path.isdir(target_path):
 
                 # 执行 pbjs 命令
                 js_output_file = target_proto_file_abs_path.replace(".proto", ".js")
-                pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -p ./ -o {js_output_file} {" ".join(related_proto_files)}'
+                pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -p {mobile_framework_dir} -o {js_output_file} {proto_file_abs_path}'
                 # subprocess.run(pbjs_cmd, shell=True, check=True)
                 try:
                     result = subprocess.run(pbjs_cmd, shell=True, check=True, capture_output=True, text=True)
@@ -131,7 +135,7 @@ if os.path.isdir(target_path):
                     print(e.stderr)
                     print("***********************")
                     with open(error_log_file, 'a') as f:
-                        f.write(f"Stderr: {proto_file_abs_path}\n related_files:{related_proto_files}\n{e.stderr}\n\n")
+                        f.write(f"Stderr: {proto_file_abs_path}\n related_files:\n{e.stderr}\n\n")
                     error_count += 1  # 增加错误计数器
                     continue
 
@@ -146,11 +150,11 @@ if os.path.isdir(target_path):
                     print(e.stderr)
                     print("***********************")
                     with open(error_log_file, 'a') as f:
-                        f.write(f"Stderr: {proto_file_abs_path}\n related_files:{related_proto_files}\n{e.stderr}\n\n")
+                        f.write(f"Stderr: {proto_file_abs_path}\n related_files:\n{e.stderr}\n\n")
                     error_count += 1  # 增加错误计数器
 
-                remove_comments_from_file(js_output_file)
-                remove_comments_from_file(ts_output_file)
+                remove_comments_from_file_new(js_output_file)
+                remove_comments_from_file_new(ts_output_file)
                 remove_lines_containing(ts_output_file, "Promise<")
                 replace_text_in_file(js_output_file, "protobufjs/minimal", "@ohos/protobufjs")
                 replace_text_in_file(ts_output_file, "protobufjs", "@ohos/protobufjs")
@@ -158,12 +162,6 @@ if os.path.isdir(target_path):
 # 如果source_dir指向的是某个具体proto文件
 elif os.path.isfile(target_path) and target_path.endswith(".proto"):
     proto_file_abs_path = target_path
-
-    # 获取所有相关的 .proto 文件（包括当前文件和所有导入的文件）
-    related_proto_files = get_proto_files_recursively(proto_file_abs_path, mobile_framework_dir)
-    print("\n\n")
-    print(related_proto_files)
-    print("///////////////////////////////")
 
     proto_file_count += 1  # 增加文件计数器
 
@@ -175,7 +173,7 @@ elif os.path.isfile(target_path) and target_path.endswith(".proto"):
 
     # 执行 pbjs 命令
     js_output_file = target_proto_file_abs_path.replace(".proto", ".js")
-    pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -p ./ -o {js_output_file} {" ".join(related_proto_files)}'
+    pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -p {mobile_framework_dir} -o {js_output_file} {proto_file_abs_path}'
     # subprocess.run(pbjs_cmd, shell=True, check=True)
     try:
         result = subprocess.run(pbjs_cmd, shell=True, check=True, capture_output=True, text=True)
@@ -184,7 +182,7 @@ elif os.path.isfile(target_path) and target_path.endswith(".proto"):
         print(e.stderr)
         print("***********************")
         with open(error_log_file, 'a') as f:
-            f.write(f"Stderr: {proto_file_abs_path}\n related_files:{related_proto_files}\n{e.stderr}\n\n")
+            f.write(f"Stderr: {proto_file_abs_path}\n related_files:\n{e.stderr}\n\n")
         error_count += 1  # 增加错误计数器
 
     # 执行 pbts 命令
@@ -198,11 +196,11 @@ elif os.path.isfile(target_path) and target_path.endswith(".proto"):
         print(e.stderr)
         print("***********************")
         with open(error_log_file, 'a') as f:
-            f.write(f"Stderr: {proto_file_abs_path}\n related_files:{related_proto_files}\n{e.stderr}\n\n")
+            f.write(f"Stderr: {proto_file_abs_path}\n related_files:\n{e.stderr}\n\n")
         error_count += 1  # 增加错误计数器
 
-    remove_comments_from_file(js_output_file)
-    remove_comments_from_file(ts_output_file)
+    remove_comments_from_file_new(js_output_file)
+    remove_comments_from_file_new(ts_output_file)
     remove_lines_containing(ts_output_file, "Promise<")
     replace_text_in_file(js_output_file, "protobufjs/minimal", "@ohos/protobufjs")
     replace_text_in_file(ts_output_file, "protobufjs", "@ohos/protobufjs")

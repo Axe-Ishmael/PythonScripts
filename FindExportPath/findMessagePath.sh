@@ -4,7 +4,7 @@
 # 最顶层文件夹路径
 top_level_folder="/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework"
 # 要搜索的消息名称
-message_name="UserInfo"
+message_name="CorpBriefInfo"
 
 # 要搜索的特定内容，这里使用正则表达式进行精确匹配
 # ^ 表示行的开始，[[:space:]]+ 表示一个或多个空白字符
