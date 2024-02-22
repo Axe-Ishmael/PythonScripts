@@ -4,11 +4,11 @@ import subprocess
 from pathlib import Path
 
 # 指定源目录和目标目录
-target_path = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" #目标文件夹路径/目标.proto文件路径
-mobile_framework_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" #api_proto工程中mobile_framework文件夹所在路径
+target_path = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework/language_call/proto/language_call.proto" #目标文件夹路径/目标.proto文件路径
+search_path = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" #api_proto工程中mobile_framework文件夹所在路径
 
-output_dir = "output/protogeneratedproduclog_D11"  # 指定产物输出位置
-error_log_file = "output/error_log_D11.txt"  # 指定错误日志文件的路径
+output_dir = "output/protogeneratedproduclog_D36"  # 指定产物输出位置
+error_log_file = "output/error_log_D36.txt"  # 指定错误日志文件的路径
 
 error_count = 0
 proto_file_count = 0
@@ -22,14 +22,6 @@ def replace_text_in_file(file_path, text_to_find, text_to_replace):
     with open(file_path, 'w') as file:
         file.write(content)
 
-
-def remove_comments_from_file(file_path):
-    with open(file_path, 'r') as file:
-        content = file.read()
-        # 正则表达式匹配单行和多行注释
-        content_no_comments = re.sub(r'//.*?$|/\*.*?\*/', '', content, flags=re.MULTILINE | re.DOTALL)
-    with open(file_path, 'w') as file:
-        file.write(content_no_comments)
 
 def remove_comments_from_file_new(file_path):
     with open(file_path, 'r') as file:
@@ -52,59 +44,6 @@ def remove_lines_containing(file_path, text_to_remove):
 
 
 
-def getImportProtoAbsPath(currentAbsPath,import_file):
-
-    base_path_string_list = currentAbsPath.split("/")
-
-    filepathList = []
-
-    import_file_string_list = import_file.split("/")
-    target_path = base_path_string_list[:len(base_path_string_list) - len(import_file_string_list)+1] + import_file_string_list
-    # 拼接 target_path 的元素，并返回绝对路径字符串
-    absolute_path = "/".join(target_path)
-
-
-    return absolute_path
-
-
-def getImportProtoAbsPathV2(mobile_framework_dir,import_file):
-
-
-    # 拼接 target_path 的元素，并返回绝对路径字符串
-    absolute_path = os.path.join(mobile_framework_dir, import_file)
-
-
-    return absolute_path
-
-
-
-def get_proto_files_recursively(proto_file_path, mobile_framework_dir):
-    visited_files = []
-
-    def visit_proto_file(file_path):
-        if file_path not in visited_files:
-            visited_files.append(file_path)
-            with open(file_path, 'r') as f:
-                content = f.read()
-
-            # 正则表达式用于匹配 import 语句（排除注释）
-            import_pattern = re.compile(r'^import\s+"(.+\.proto)";', re.MULTILINE)
-
-            # 查找并记录所有 import 文件
-            for match in import_pattern.finditer(content):
-                imported_file = match.group(1)
-                imported_file_path = getImportProtoAbsPathV2(mobile_framework_dir,imported_file)
-
-                if not os.path.isfile(imported_file_path):
-                    imported_file_path = os.path.join(mobile_framework_dir, imported_file)
-                    if not os.path.isfile(imported_file_path):
-                        raise FileNotFoundError(f"Imported file '{imported_file}' not found at '{imported_file_path}' current file path is '{file_path}'")
-
-                visit_proto_file(imported_file_path)
-
-    visit_proto_file(proto_file_path)
-    return visited_files
-
 # 创建目标目录
 Path(output_dir).mkdir(parents=True, exist_ok=True)
 
@@ -126,7 +65,7 @@ if os.path.isdir(target_path):
 
                 # 执行 pbjs 命令
                 js_output_file = target_proto_file_abs_path.replace(".proto", ".js")
-                pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -p {mobile_framework_dir} -o {js_output_file} {proto_file_abs_path}'
+                pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -p {search_path} -o {js_output_file} {proto_file_abs_path}'
                 # subprocess.run(pbjs_cmd, shell=True, check=True)
                 try:
                     result = subprocess.run(pbjs_cmd, shell=True, check=True, capture_output=True, text=True)
@@ -173,7 +112,7 @@ elif os.path.isfile(target_path) and target_path.endswith(".proto"):
 
     # 执行 pbjs 命令
     js_output_file = target_proto_file_abs_path.replace(".proto", ".js")
-    pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -p {mobile_framework_dir} -o {js_output_file} {proto_file_abs_path}'
+    pbjs_cmd = f'pbjs -t static-module -w es6 --no-delimited --no-create --no-verify --no-delimited --no-convert -p {search_path} -o {js_output_file} {proto_file_abs_path}'
     # subprocess.run(pbjs_cmd, shell=True, check=True)
     try:
         result = subprocess.run(pbjs_cmd, shell=True, check=True, capture_output=True, text=True)

@@ -4,11 +4,11 @@ import subprocess
 from pathlib import Path
 
 # 指定源目录和目标目录
-target_path = "/Users/axeishmael/IdeaProjects/Jni2Proto/src/main/java/Output/hm_service.proto" #目标文件夹路径/目标.proto文件路径
+target_path = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework/language_call/proto/language_call.proto" #目标文件夹路径/目标.proto文件路径
 mobile_framework_dir = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" #api_proto工程中mobile_framework文件夹所在路径
 
-output_dir = "output/protogeneratedproduclog_D8"  # 指定产物输出位置
-error_log_file = "output/error_log_D8.txt"  # 指定错误日志文件的路径
+output_dir = "output/protogeneratedproduclog_D37"  # 指定产物输出位置
+error_log_file = "output/error_log_D37.txt"  # 指定错误日志文件的路径
 
 error_count = 0
 proto_file_count = 0
